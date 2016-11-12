@@ -1,14 +1,14 @@
-html {
+#mainstyle {
 	font-family: Arial, Helvetica, sans-serif;
-	background-color: #E3F0FB;
+	background-color: #d789ff;
 	border-radius: 4px;
 	text-align: center;
 }
 .buttonStyle {
 	border-radius: 4px;
-	border: thin solid #000000;
+	border: 1px solid #000000;
 	padding: 5px;
-	background-color: #f44242;
+	background-color: #ffffff;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: bold;
 	color: #333333;
@@ -16,19 +16,20 @@ html {
 }
 
 .buttonStyle:hover {
-	border: thin solid #000000;
-	background-color: #f76060;
+	border: 1px solid #000000;
+	background-color: #eaeaea;
 	color: #333333;
 	cursor: pointer;
 }
 .buttonStyle:active {
-	border: thin solid #000000;
-	background-color: #ff8c8c;
+	border: 1px solid #000000;
+	background-color: #dad9db;
 	color: #333333;
 	cursor: pointer;
 }
 
 #gamecanvas {
 	border: 1px solid #000000;
-	background-color: #f76060;
+	border-radius: 4px;
+	background-color: #eaeaea;
 }
