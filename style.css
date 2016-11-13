@@ -32,3 +32,9 @@
 	border-radius: 4px;
 	background-color: #eaeaea;
 }
+
+#weapon {
+	vertical-align: middle;
+	padding-left: 10px;
+	padding-right: 10px;
+}

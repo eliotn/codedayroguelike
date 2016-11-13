@@ -9,14 +9,22 @@ var tileheight = 30;
 
 var fishChar = 224;
 var heartChar = 3;
-var weaponChar = 10;
+var weaponChar = 244;
+var wallChar = 219;
 var stairsChar = '>'.charCodeAt(0);
-var bossChar = 'B'.charCodeAt(0);
-var weapons = ['fists', 'brass knuckles', 'copper knuckles', 'silver knuckles',
-'gold knuckles', 'brass bat', 'copper bat', 'silver bat', 'gold bat', 'brass gun',
-'silver gun', 'golden gun', 'diamond gun', 'HAPPY CODE DAY!', 'DUKE NUKEUM!'];
+var bossChar = 1;
+var weaponimages = ['noweapon.png', 'weakpunch.jpg', 'helloworld.png', 'toyknife.jpg',
+'butterknife.jpg', 'brassknuckles.JPG', 'realknife.png', 'butchersknife.jpg', 'goldenbat.png', 'toygun.jpg',
+'silvergun.jpg', 'goldengun.jpg', 'shrek.jpg', 'code.jpg', 'nuke.png', 'undefinedpower.jpg',
+'undefinedpower.jpg','undefinedpower.jpg','undefinedpower.jpg','undefinedpower.jpg','undefinedpower.jpg',
+'undefinedpower.jpg'];
+var weapons = ['Pick something up please...', 'Wimp Punch', 'Hello World!', 'Toy Knife',
+'Butter Knife', 'Brass Knuckles', 'Real Knife', 'Butcher\'s Knife', 'Gold Bat', 'Toy Gun',
+'Silver Gun', 'Golden Gun', 'SHREKT!', 'HAPPY CODE DAY!', 'DUKE NUKEUM!', 'undefined power',
+'level 2 undefined power', 'level 3 undefined power', '??????', 'if you see this you are pro'];
 var imageObj = new Image(256, 256);
 var deathmessage;
+var buttonmessage;
 imageObj.onload = function() {
     myButton.addEventListener('click', doSomething, false)
 };
@@ -33,7 +41,7 @@ function drawUI() {
         
     }
     else {
-        playerInfo.innerHTML = "<p>Weapon: " + weapons[player.weapon] + whiteSpace(80) +
+        playerInfo.innerHTML = "<p>Weapon: <img id='weapon' src='./images/" + weaponimages[player.weapon] + "'width=80 height=60>" + weapons[player.weapon] +
         "Health: " + player.hp + whiteSpace(80) +
         "Score: " + player.score + whiteSpace(80) + "Level: " + level + "</p>"; //Using transparent image for spacing
     }
@@ -56,10 +64,10 @@ function spawnLevel(nextLevel) {
         tilelist = [];
         for (var y = 0; y < 30; y++) {
             if (level !== 4) {
-                tilelist.push((x%2 && y%2)?178:0);
+                tilelist.push((x%2 && y%2)?wallChar:0);
             }
             else {
-                tilelist.push((x >= 18 && x <= 20 && y >= 14 && y <= 16)?0:178);
+                tilelist.push((x >= 18 && x <= 20 && y >= 14 && y <= 16)?0:wallChar);
             }
         }
         tiles.push(tilelist);
@@ -84,11 +92,12 @@ function spawnLevel(nextLevel) {
             }
             else if (rngenemy > 0.6) {
                 enemychar = 'k'.charCodeAt(0);
-                enemyhp = 10*level;
-                enemydamage = 2*Math.pow(level, level);
+                enemyhp = 5*Math.pow(level, level);
+                enemydamage = 2*level;
             }
             else if (rngenemy > 0.4) {
                 enemychar = fishChar;
+                enemydamage = 1;
             }
             var obj = spawnRandom();
             enemies.push({x: obj.x, y: obj.y, hp: enemyhp, damage: enemydamage, char:enemychar});
@@ -98,7 +107,7 @@ function spawnLevel(nextLevel) {
             var obj = spawnRandom();
             tiles[obj.x][obj.y] = heartChar;
         }
-        for (var i = 0; i < 6; i++) {
+        for (var i = 0; i < 10; i++) {
             var obj = spawnRandom();
             tiles[obj.x][obj.y] = weaponChar;
         }
@@ -111,7 +120,7 @@ function spawnLevel(nextLevel) {
         player.x = -100;
         player.y = -100;
         var obj = spawnRandom();
-        enemies.push({x: obj.x, y: obj.y, hp: 100, damage: 5, char: bossChar});
+        enemies.push({x: obj.x, y: obj.y, hp: 100, damage: 1, char: bossChar});
         obj = spawnRandom();
         player.x = obj.x;
         player.y = obj.y;
@@ -122,11 +131,11 @@ function spawnLevel(nextLevel) {
 }
 function restartGame() {
     
-    player = {x: 0, y:0, hp: 20, char:2, score: 0, dead: false, damage: 5, weapon:0};
+    player = {x: 0, y:0, hp: 20, char:2, score: 0, dead: false, healthBonus: 5, damage: 0, weapon:0};
     spawnLevel(1);
 }
 
-function death(message) {
+function death(message, buttonmessage) {
     player.dead = true;
     deathmessage = message;
     drawUI();
@@ -189,9 +198,10 @@ function updateEnemies() {
                 }
             }
         }
-        else if (enemies[i].char === bossChar && Math.abs(enemies[i].x-player.x) + Math.abs(enemies[i].y-player.y) <= 1) {
+        else if ((enemies[i].char === bossChar || enemies[i].char === fishChar) && Math.abs(enemies[i].x-player.x) + Math.abs(enemies[i].y-player.y) <= 1) {
         
             reduceHealth(player, enemies[i].damage);
+            if (enemies[i].char === bossChar) enemies[i].damage += 1;
         }
         else if (enemies[i].char >= '1'.charCodeAt(0) && enemies[i].char <= '4'.charCodeAt(0)) {
             enemies[i].char -= 1;
@@ -261,7 +271,7 @@ function moveTo(objecttomove, x, y) {
     if (x < 0 || x >= tilewidth || y < 0 || y >= tileheight) {
         return;
     }
-    if (tiles[x][y] == 178) {
+    if (tiles[x][y] == wallChar) {
         return;
     }
     
@@ -276,21 +286,29 @@ function moveTo(objecttomove, x, y) {
             blocked = true;
         }
     }
-    if (tiles[x][y] === heartChar && objecttomove === player) {
-        player.hp += 20;
-        tiles[x][y] = 0;
+    if (tiles[x][y] === heartChar) {
+        if (objecttomove === player) {
+            player.hp += player.healthBonus;
+            player.healthBonus += 5;
+            tiles[x][y] = 0;
+            
+        }
         blocked = true;
     }
     if (tiles[x][y] === weaponChar) {
-        objecttomove.damage += 5;
         if (objecttomove === player) {
-            objecttomove.weapon += 1;
+            objecttomove.damage += 1;
+            if (objecttomove === player) {
+                objecttomove.weapon += 1;
+            }
+            tiles[x][y] = 0;
         }
-        tiles[x][y] = 0;
         blocked = true;
     }
     if (tiles[x][y] === stairsChar) {
-        spawnLevel(level + 1);
+        if (objecttomove === player) {
+            spawnLevel(level + 1);
+        }
         blocked = true;
     }
     if (!blocked) {
