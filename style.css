@@ -1,5 +1,5 @@
 #mainstyle {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: 'Open Sans';
 	background-color: #d789ff;
 	border-radius: 4px;
 	text-align: center;
@@ -9,10 +9,9 @@
 	border: 1px solid #000000;
 	padding: 5px;
 	background-color: #ffffff;
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: bold;
 	color: #333333;
-	width: 75px;
+	width: 100px;
 }
 
 .buttonStyle:hover {
